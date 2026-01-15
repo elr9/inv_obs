@@ -29,12 +29,16 @@ if adj_file and inv_file:
     try:
         # Load Data
         df_adj = pd.read_csv(adj_file)
-        # Note: header=1 for inv_obs because actual headers are on the second row
+        # Note: header=1 for inv_obs because actual headers are on the second row (0-indexed 1)
         df_inv = pd.read_csv(inv_file, header=1)
 
         # Clean Columns
         df_adj.columns = [c.strip() for c in df_adj.columns]
         df_inv.columns = [c.strip() for c in df_inv.columns]
+
+        # Rename columns to match internal logic if needed
+        # Mapping adjustment.csv: ITEM -> Item Number, Ajuste Positivo -> Adjustment
+        df_adj.rename(columns={'ITEM': 'Item Number', 'Ajuste Positivo': 'Adjustment'}, inplace=True)
 
         # Numeric Conversion
         df_adj['Adjustment'] = pd.to_numeric(df_adj['Adjustment'], errors='coerce').fillna(0)
